@@ -44,15 +44,22 @@ Get current machine and OS context:
 
 ### 3. Call Python Script
 
-Get the configuration repository path from environment:
-- Read `YW_CONFIG_REPO_PATH` environment variable (required)
-
-Execute the manage_memory.py script:
-
+**Step 1: Find plugin directory**
 ```bash
-# Plugin root is current directory when skill executes
-source venv/bin/activate  # or venv\Scripts\activate on Windows
-python ./scripts/manage_memory.py describe-repo \
+PLUGIN_DIR=$(find ~/.claude/plugins/cache -type d -path "*/yoshiwatanabe-plugins/yoshiwatanabe-dev/*/scripts" 2>/dev/null | head -1 | xargs dirname)
+```
+
+If `PLUGIN_DIR` is empty, return error: "Plugin installation not found. Try reinstalling with /plugin install yoshiwatanabe-dev@yoshiwatanabe-plugins"
+
+**Step 2: Get configuration path**
+- Read `YW_CONFIG_REPO_PATH` environment variable (required)
+- If not set, return error: "Please set YW_CONFIG_REPO_PATH in ~/.claude/settings.json. See installation guide for WSL path requirements."
+
+**Step 3: Execute the script**
+```bash
+cd "$PLUGIN_DIR"
+source venv/bin/activate
+python scripts/manage_memory.py describe-repo \
   --config-repo "$YW_CONFIG_REPO_PATH" \
   --repo-path {repo_path} \
   --description "{description}" \
@@ -60,8 +67,6 @@ python ./scripts/manage_memory.py describe-repo \
   --machine {machine} \
   --os {os}
 ```
-
-**Note:** If `YW_CONFIG_REPO_PATH` is not set, return an error telling the user to configure it in `~/.claude/settings.json`
 
 ### 4. Handle Result
 
