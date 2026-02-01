@@ -54,8 +54,17 @@ Execute the manage_memory.py script:
 
 ```bash
 cd "${CLAUDE_PLUGIN_ROOT}"
-source venv/bin/activate
-# Use python3 on Linux/WSL, python on Windows
+
+# Auto-create venv if missing (first-time setup or after plugin update)
+if [ ! -d "venv" ]; then
+  echo "Setting up Python environment (first time)..."
+  python3 -m venv venv
+  source venv/bin/activate
+  pip install -r requirements.txt
+else
+  source venv/bin/activate
+fi
+
 python3 scripts/manage_memory.py save \
   --config-repo "$YW_CONFIG_REPO_PATH" \
   --detail-level {detail_level} \
@@ -68,10 +77,6 @@ python3 scripts/manage_memory.py save \
   --keywords "{keywords}" \
   --tags "{tags}"
 ```
-
-**Note**: Adjust paths based on Windows vs Linux/WSL:
-- Windows: Use `python` and backslash paths
-- Linux/WSL: Use `python3` and forward slash paths
 
 ### 4. Handle Result
 

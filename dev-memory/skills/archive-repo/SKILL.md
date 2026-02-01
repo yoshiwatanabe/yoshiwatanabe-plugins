@@ -39,7 +39,16 @@ Execute the manage_memory.py script:
 
 ```bash
 cd "${CLAUDE_PLUGIN_ROOT}"
-source venv/bin/activate
+
+# Auto-create venv if missing (first-time setup or after plugin update)
+if [ ! -d "venv" ]; then
+  echo "Setting up Python environment (first time)..."
+  python3 -m venv venv
+  source venv/bin/activate
+  pip install -r requirements.txt
+else
+  source venv/bin/activate
+fi
 source venv/bin/activate  # or venv\Scripts\Activate.ps1 on Windows
 # Use python3 on Linux/WSL, python on Windows
 python3 scripts/manage_memory.py archive-repo \

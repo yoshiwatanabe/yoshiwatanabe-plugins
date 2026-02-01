@@ -21,33 +21,9 @@ Simple 3-step installation using Claude Code.
 /plugin install yoshiwatanabe-dev@yoshiwatanabe-plugins
 ```
 
-### 3. Set Up Python Virtual Environment
+**Note:** The first time you use any skill, it will automatically set up a Python virtual environment (takes 1-2 seconds). This isolates the plugin's dependencies from your system Python. Subsequent uses are instant.
 
-The plugin uses a Python virtual environment for isolated dependencies. Set it up once:
-
-**Find your plugin directory:**
-```bash
-PLUGIN_DIR=$(find ~/.claude/plugins/cache -type d -path "*/yoshiwatanabe-plugins/yoshiwatanabe-dev/*" -name "scripts" 2>/dev/null | head -1 | xargs dirname)
-echo $PLUGIN_DIR
-```
-
-**Create and activate venv:**
-```bash
-cd "$PLUGIN_DIR"
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-**What this does:**
-- `python3 -m venv venv` - Creates isolated Python environment in `venv/` directory
-- `source venv/bin/activate` - Activates it (your prompt changes to show `(venv)`)
-- `pip install -r requirements.txt` - Installs plugin dependencies (PyYAML) into venv only
-- Skills will automatically use this venv when executing
-
-**Learning venv:** This isolates the plugin's dependencies from system Python. Other plugins/apps can't break this one by changing libraries. You can delete `venv/` and recreate it anytime without affecting anything else.
-
-### 5. Configure the Plugin
+### 3. Configure the Plugin
 
 Add the configuration repository path to your Claude Code settings.
 
@@ -147,8 +123,16 @@ Repeat steps 1-3 on each machine. The plugin will sync memory across all machine
 - Check your `~/.claude/settings.json` has the correct path
 
 **Python errors:**
-- The plugin automatically sets up its virtual environment
-- If issues persist, check Python 3.8+ is installed: `python --version`
+- First skill use auto-creates venv (you'll see "Setting up Python environment...")
+- If venv creation fails, ensure Python 3.8+ is installed: `python3 --version`
+- If needed, manually create: `cd "${CLAUDE_PLUGIN_ROOT}" && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt`
+
+**Understanding venv (virtual environment):**
+- Automatic on first use after install/update
+- Isolates plugin dependencies from system Python
+- Located in plugin cache: `~/.claude/plugins/cache/.../yoshiwatanabe-dev/.../venv/`
+- Recreated automatically after plugin updates
+- You'll see it happen once per plugin version - learn by watching!
 
 **Path format examples:**
 - ✅ WSL: `/mnt/c/users/john/repos/config`

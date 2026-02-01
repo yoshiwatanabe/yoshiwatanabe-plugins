@@ -37,7 +37,16 @@ Execute the query_memory.py script:
 
 ```bash
 cd "${CLAUDE_PLUGIN_ROOT}"
-source venv/bin/activate
+
+# Auto-create venv if missing (first-time setup or after plugin update)
+if [ ! -d "venv" ]; then
+  echo "Setting up Python environment (first time)..."
+  python3 -m venv venv
+  source venv/bin/activate
+  pip install -r requirements.txt
+else
+  source venv/bin/activate
+fi
 # Use python3 on Linux/WSL, python on Windows
 python3 scripts/query_memory.py search-memory \
   --config-repo "$YW_CONFIG_REPO_PATH" \
