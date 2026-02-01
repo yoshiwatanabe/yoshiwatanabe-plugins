@@ -209,6 +209,126 @@ class ManageMemory:
             "filepath": str(filepath.relative_to(self.config_repo)),
         }
 
+    def archive_repo(self, **kwargs):
+        """
+        Archive (hide) a repository.
+
+        Args:
+            repo_name: str - repository name/slug
+            reason: str - optional reason for archiving
+
+        Returns:
+            dict: Result with repo_slug and filepath
+        """
+        # Pull latest from remote
+        print("Pulling latest changes...")
+        self.git_sync.pull()
+
+        repo_slug = kwargs["repo_name"]
+        filepath = self.repos_dir / f"{repo_slug}.md"
+
+        if not filepath.exists():
+            return {
+                "success": False,
+                "error": f"Repository '{repo_slug}' not found in memory system"
+            }
+
+        # Load existing metadata
+        content = filepath.read_text(encoding="utf-8")
+        parts = content.split("---\n", 2)
+        if len(parts) < 3:
+            return {"success": False, "error": "Invalid repository metadata format"}
+
+        frontmatter = yaml.safe_load(parts[1])
+
+        # Mark as archived
+        frontmatter["archived"] = True
+        frontmatter["archived_date"] = datetime.now(UTC).isoformat().replace('+00:00', 'Z')
+        if kwargs.get("reason"):
+            frontmatter["archived_reason"] = kwargs["reason"]
+
+        # Write file
+        new_content = f"---\n{yaml.dump(frontmatter, default_flow_style=False, sort_keys=False)}---\n\n"
+        if len(parts) > 2:
+            new_content += parts[2]
+
+        filepath.write_text(new_content, encoding="utf-8")
+        print(f"Archived repository: {filepath.relative_to(self.config_repo)}")
+
+        # Commit and push
+        print("Committing and pushing changes...")
+        self.git_sync.commit_and_push(
+            files=[str(filepath.relative_to(self.config_repo))],
+            message=f"Archive repository: {repo_slug}"
+        )
+
+        return {
+            "success": True,
+            "repo_slug": repo_slug,
+            "archived": True,
+            "filepath": str(filepath.relative_to(self.config_repo)),
+        }
+
+    def unarchive_repo(self, **kwargs):
+        """
+        Unarchive (restore) a repository.
+
+        Args:
+            repo_name: str - repository name/slug
+
+        Returns:
+            dict: Result with repo_slug and filepath
+        """
+        # Pull latest from remote
+        print("Pulling latest changes...")
+        self.git_sync.pull()
+
+        repo_slug = kwargs["repo_name"]
+        filepath = self.repos_dir / f"{repo_slug}.md"
+
+        if not filepath.exists():
+            return {
+                "success": False,
+                "error": f"Repository '{repo_slug}' not found in memory system"
+            }
+
+        # Load existing metadata
+        content = filepath.read_text(encoding="utf-8")
+        parts = content.split("---\n", 2)
+        if len(parts) < 3:
+            return {"success": False, "error": "Invalid repository metadata format"}
+
+        frontmatter = yaml.safe_load(parts[1])
+
+        # Unarchive
+        frontmatter["archived"] = False
+        if "archived_date" in frontmatter:
+            del frontmatter["archived_date"]
+        if "archived_reason" in frontmatter:
+            del frontmatter["archived_reason"]
+
+        # Write file
+        new_content = f"---\n{yaml.dump(frontmatter, default_flow_style=False, sort_keys=False)}---\n\n"
+        if len(parts) > 2:
+            new_content += parts[2]
+
+        filepath.write_text(new_content, encoding="utf-8")
+        print(f"Unarchived repository: {filepath.relative_to(self.config_repo)}")
+
+        # Commit and push
+        print("Committing and pushing changes...")
+        self.git_sync.commit_and_push(
+            files=[str(filepath.relative_to(self.config_repo))],
+            message=f"Unarchive repository: {repo_slug}"
+        )
+
+        return {
+            "success": True,
+            "repo_slug": repo_slug,
+            "archived": False,
+            "filepath": str(filepath.relative_to(self.config_repo)),
+        }
+
     def _get_remote_url(self, repo_path):
         """Get git remote URL for a repository."""
         try:
@@ -276,7 +396,7 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="Manage memory operations")
-    parser.add_argument("command", choices=["save", "describe-repo"])
+    parser.add_argument("command", choices=["save", "describe-repo", "archive-repo", "unarchive-repo"])
     parser.add_argument("--config-repo", required=True, help="Path to config repository")
     parser.add_argument("--detail-level", default="normal")
     parser.add_argument("--repo-path", help="Repository path")
@@ -289,6 +409,8 @@ def main():
     parser.add_argument("--tags", help="Comma-separated tags")
     parser.add_argument("--worktree", help="Worktree path")
     parser.add_argument("--description", help="Repository description")
+    parser.add_argument("--repo-name", help="Repository name/slug")
+    parser.add_argument("--reason", help="Reason for archiving (optional)")
 
     args = parser.parse_args()
 
@@ -315,6 +437,15 @@ def main():
                 tags=args.tags,
                 machine=args.machine,
                 os=args.os,
+            )
+        elif args.command == "archive-repo":
+            result = ops.archive_repo(
+                repo_name=args.repo_name,
+                reason=args.reason,
+            )
+        elif args.command == "unarchive-repo":
+            result = ops.unarchive_repo(
+                repo_name=args.repo_name,
             )
 
         print(json.dumps(result, indent=2))
