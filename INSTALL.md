@@ -27,7 +27,7 @@ Add the configuration repository path to your Claude Code settings.
 
 Edit `~/.claude/settings.json` and add the `env` section:
 
-**Windows:**
+**Windows (PowerShell/CMD):**
 ```json
 {
   "env": {
@@ -36,7 +36,23 @@ Edit `~/.claude/settings.json` and add the `env` section:
 }
 ```
 
-**WSL/Linux:**
+**WSL (Ubuntu/Linux on Windows):**
+
+If your configuration repository is on the Windows side, use the WSL mount path:
+```json
+{
+  "env": {
+    "YW_CONFIG_REPO_PATH": "/mnt/c/users/<username>/repos/yoshiwatanabe-configurations"
+  }
+}
+```
+
+**Important:**
+- Windows drives are mounted at `/mnt/c/`, `/mnt/d/`, etc. in WSL
+- Use lowercase for the drive letter and path (e.g., `/mnt/c/users/` not `/mnt/C/Users/`)
+- Use forward slashes `/` not backslashes `\`
+
+**Linux (native):**
 ```json
 {
   "env": {
@@ -99,6 +115,16 @@ Repeat steps 1-3 on each machine. The plugin will sync memory across all machine
 - Restart Claude Code
 - Check plugin is enabled: `claude config get enabledPlugins`
 
+**"No such file or directory" errors:**
+- **WSL users:** Verify you're using `/mnt/c/users/...` path format (lowercase)
+- Verify the path exists: `ls "$YW_CONFIG_REPO_PATH"`
+- Check your `~/.claude/settings.json` has the correct path
+
 **Python errors:**
 - The plugin automatically sets up its virtual environment
 - If issues persist, check Python 3.8+ is installed: `python --version`
+
+**Path format examples:**
+- ✅ WSL: `/mnt/c/users/john/repos/config`
+- ❌ WSL: `C:\Users\john\repos\config` (Windows format won't work)
+- ❌ WSL: `/mnt/C/Users/john/repos/config` (uppercase won't work)
