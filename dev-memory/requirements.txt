@@ -1,0 +1,11 @@
+# Python dependencies for memory system
+
+# YAML parsing for frontmatter
+PyYAML>=6.0.1
+
+# Git operations (optional, using subprocess for now)
+# gitpython>=3.1.40
+
+# Testing (optional)
+pytest>=7.4.0
+pytest-cov>=4.1.0
