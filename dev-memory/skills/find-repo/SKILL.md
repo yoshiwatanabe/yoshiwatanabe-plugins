@@ -31,7 +31,8 @@ Execute the query_memory.py script:
 ```bash
 cd "${CLAUDE_PLUGIN_ROOT}"
 source venv/bin/activate
-python scripts/query_memory.py find-repo \
+# Use python3 on Linux/WSL, python on Windows
+python3 scripts/query_memory.py find-repo \
   --config-repo "$YW_CONFIG_REPO_PATH" \
   --repo-name {repo_name}
 ```

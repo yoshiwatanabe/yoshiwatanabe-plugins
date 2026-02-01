@@ -53,7 +53,8 @@ Execute the script from plugin directory:
 ```bash
 cd "${CLAUDE_PLUGIN_ROOT}"
 source venv/bin/activate
-python scripts/manage_memory.py describe-repo \
+# Use python3 on Linux/WSL, python on Windows
+python3 scripts/manage_memory.py describe-repo \
   --config-repo "$YW_CONFIG_REPO_PATH" \
   --repo-path {repo_path} \
   --description "{description}" \

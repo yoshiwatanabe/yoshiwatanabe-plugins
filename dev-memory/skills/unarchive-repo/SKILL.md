@@ -31,7 +31,8 @@ Execute the manage_memory.py script:
 cd "${CLAUDE_PLUGIN_ROOT}"
 source venv/bin/activate
 source venv/bin/activate  # or venv\Scripts\Activate.ps1 on Windows
-python scripts/manage_memory.py unarchive-repo \
+# Use python3 on Linux/WSL, python on Windows
+python3 scripts/manage_memory.py unarchive-repo \
   --config-repo "$YW_CONFIG_REPO_PATH" \
   --repo-name {repo_name}
 ```

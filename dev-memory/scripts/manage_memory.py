@@ -57,9 +57,8 @@ class ManageMemory:
         Returns:
             dict: Result with episode_id, filepath, synced status
         """
-        # Pull latest from remote
-        print("Pulling latest changes...")
-        self.git_sync.pull()
+        # Note: No automatic pull - users can pull manually when needed
+        # If push fails due to being behind, git will show clear error
 
         # Generate episode metadata
         episode_id = generate_episode_id()
@@ -147,9 +146,8 @@ class ManageMemory:
         Returns:
             dict: Result with repo_slug and filepath
         """
-        # Pull latest from remote
-        print("Pulling latest changes...")
-        self.git_sync.pull()
+        # Note: No automatic pull - users can pull manually when needed
+        # If push fails due to being behind, git will show clear error
 
         repo_slug = normalize_repo_slug(kwargs["repo_path"])
         filepath = self.repos_dir / f"{repo_slug}.md"
@@ -220,9 +218,8 @@ class ManageMemory:
         Returns:
             dict: Result with repo_slug and filepath
         """
-        # Pull latest from remote
-        print("Pulling latest changes...")
-        self.git_sync.pull()
+        # Note: No automatic pull - users can pull manually when needed
+        # If push fails due to being behind, git will show clear error
 
         repo_slug = kwargs["repo_name"]
         filepath = self.repos_dir / f"{repo_slug}.md"
@@ -279,9 +276,8 @@ class ManageMemory:
         Returns:
             dict: Result with repo_slug and filepath
         """
-        # Pull latest from remote
-        print("Pulling latest changes...")
-        self.git_sync.pull()
+        # Note: No automatic pull - users can pull manually when needed
+        # If push fails due to being behind, git will show clear error
 
         repo_slug = kwargs["repo_name"]
         filepath = self.repos_dir / f"{repo_slug}.md"

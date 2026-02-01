@@ -37,7 +37,8 @@ Execute the scan_repos.py script:
 ```bash
 cd "${CLAUDE_PLUGIN_ROOT}"
 source venv/bin/activate
-python scripts/scan_repos.py scan-repos \
+# Use python3 on Linux/WSL, python on Windows
+python3 scripts/scan_repos.py scan-repos \
   --config-repo "$YW_CONFIG_REPO_PATH" \
   --mode {mode} \
   --machine {machine}
