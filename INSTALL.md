@@ -21,7 +21,33 @@ Simple 3-step installation using Claude Code.
 /plugin install yoshiwatanabe-dev@yoshiwatanabe-plugins
 ```
 
-### 3. Configure the Plugin
+### 3. Set Up Python Virtual Environment
+
+The plugin uses a Python virtual environment for isolated dependencies. Set it up once:
+
+**Find your plugin directory:**
+```bash
+PLUGIN_DIR=$(find ~/.claude/plugins/cache -type d -path "*/yoshiwatanabe-plugins/yoshiwatanabe-dev/*" -name "scripts" 2>/dev/null | head -1 | xargs dirname)
+echo $PLUGIN_DIR
+```
+
+**Create and activate venv:**
+```bash
+cd "$PLUGIN_DIR"
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+**What this does:**
+- `python3 -m venv venv` - Creates isolated Python environment in `venv/` directory
+- `source venv/bin/activate` - Activates it (your prompt changes to show `(venv)`)
+- `pip install -r requirements.txt` - Installs plugin dependencies (PyYAML) into venv only
+- Skills will automatically use this venv when executing
+
+**Learning venv:** This isolates the plugin's dependencies from system Python. Other plugins/apps can't break this one by changing libraries. You can delete `venv/` and recreate it anytime without affecting anything else.
+
+### 5. Configure the Plugin
 
 Add the configuration repository path to your Claude Code settings.
 

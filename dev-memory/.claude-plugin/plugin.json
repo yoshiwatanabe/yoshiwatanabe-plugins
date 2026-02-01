@@ -9,8 +9,5 @@
   "homepage": "https://github.com/yoshiwatanabe/yoshiwatanabe-plugins/tree/main/dev-memory",
   "repository": "https://github.com/yoshiwatanabe/yoshiwatanabe-plugins",
   "license": "MIT",
-  "keywords": ["memory", "episodes", "repositories", "development", "tracking", "git", "cross-machine"],
-  "scripts": {
-    "postinstall": "python3 scripts/setup_venv.py"
-  }
+  "keywords": ["memory", "episodes", "repositories", "development", "tracking", "git", "cross-machine"]
 }
