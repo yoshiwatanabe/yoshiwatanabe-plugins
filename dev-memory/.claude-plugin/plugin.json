@@ -2,86 +2,14 @@
   "name": "yoshiwatanabe-dev",
   "version": "1.0.0",
   "description": "Development domain memory management: Track coding sessions, repositories, and dev work across machines",
-  "author": "Yoshi Watanabe",
+  "author": {
+    "name": "Yoshi Watanabe",
+    "url": "https://github.com/yoshiwatanabe"
+  },
+  "homepage": "https://github.com/yoshiwatanabe/yoshiwatanabe-plugins/tree/main/dev-memory",
   "repository": "https://github.com/yoshiwatanabe/yoshiwatanabe-plugins",
   "license": "MIT",
-  "domain": "dev",
-
-  "claude": {
-    "minVersion": "0.1.0"
-  },
-
-  "skills": [
-    {
-      "name": "save-memory",
-      "description": "Save current coding session progress and context",
-      "file": "skills/save-memory/SKILL.md",
-      "scope": "user"
-    },
-    {
-      "name": "describe-repo",
-      "description": "Add or update repository metadata and description",
-      "file": "skills/describe-repo/SKILL.md",
-      "scope": "user"
-    },
-    {
-      "name": "find-repo",
-      "description": "Find repository clones across all machines",
-      "file": "skills/find-repo/SKILL.md",
-      "scope": "user"
-    },
-    {
-      "name": "scan-repos",
-      "description": "Scan local repositories and compare with tracked repos",
-      "file": "skills/scan-repos/SKILL.md",
-      "scope": "user"
-    },
-    {
-      "name": "list-recent-repos",
-      "description": "List recently worked-on repositories",
-      "file": "skills/list-recent-repos/SKILL.md",
-      "scope": "user"
-    },
-    {
-      "name": "search-memory",
-      "description": "Search development memory by feature or keywords",
-      "file": "skills/search-memory/SKILL.md",
-      "scope": "user"
-    },
-    {
-      "name": "archive-repo",
-      "description": "Archive (hide) an obsolete repository from queries",
-      "file": "skills/archive-repo/SKILL.md",
-      "scope": "user"
-    },
-    {
-      "name": "unarchive-repo",
-      "description": "Restore an archived repository to active queries",
-      "file": "skills/unarchive-repo/SKILL.md",
-      "scope": "user"
-    }
-  ],
-
-  "agents": [
-    {
-      "name": "memory-manager",
-      "description": "Manages development memory operations in isolated context",
-      "file": "agents/memory-manager.md"
-    }
-  ],
-
-  "config": {
-    "configRepoPath": {
-      "description": "Path to your configuration repository (e.g., yoshiwatanabe-configurations)",
-      "type": "string",
-      "required": true,
-      "example": "C:\\Users\\{username}\\repos\\your-config-repo"
-    },
-    "detailLevel": {
-      "description": "Default detail level for memory summaries",
-      "type": "string",
-      "enum": ["brief", "normal", "detailed"],
-      "default": "normal"
-    }
-  }
+  "keywords": ["memory", "episodes", "repositories", "development", "tracking", "git", "cross-machine"],
+  "agents": "./agents/",
+  "skills": "./skills/"
 }
