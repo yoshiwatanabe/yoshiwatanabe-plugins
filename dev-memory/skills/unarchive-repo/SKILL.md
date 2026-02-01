@@ -30,14 +30,15 @@ Execute the manage_memory.py script:
 ```bash
 cd "${CLAUDE_PLUGIN_ROOT}"
 
-# Auto-create venv if missing (first-time setup or after plugin update)
-if [ ! -d "venv" ]; then
+# Try to use venv if available, create if needed, skip if venv creation fails
+if [ -d "venv" ]; then
+  source venv/bin/activate
+elif python3 -m venv venv 2>/dev/null; then
   echo "Setting up Python environment (first time)..."
-  python3 -m venv venv
   source venv/bin/activate
   pip install -r requirements.txt
 else
-  source venv/bin/activate
+  echo "Note: Using system Python (venv creation not available)"
 fi
 source venv/bin/activate  # or venv\Scripts\Activate.ps1 on Windows
 # Use python3 on Linux/WSL, python on Windows

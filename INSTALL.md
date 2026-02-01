@@ -5,7 +5,13 @@ Simple 3-step installation using Claude Code.
 ## Prerequisites
 
 - Claude Code CLI installed
+- Python 3.8+ with PyYAML (`pip install pyyaml` if not available)
 - A configuration repository with domain structure (see [Configuration Setup](#configuration-setup))
+
+**Optional (recommended for dependency isolation):**
+- `python3-venv` package
+- Ubuntu/Debian: `sudo apt install python3-venv`
+- Plugin gracefully falls back to system Python if venv unavailable
 
 ## Installation Steps
 
@@ -21,7 +27,7 @@ Simple 3-step installation using Claude Code.
 /plugin install yoshiwatanabe-dev@yoshiwatanabe-plugins
 ```
 
-**Note:** The first time you use any skill, it will automatically set up a Python virtual environment (takes 1-2 seconds). This isolates the plugin's dependencies from your system Python. Subsequent uses are instant.
+**Note:** The plugin will automatically use a Python virtual environment if possible (isolates dependencies). If venv creation fails, it gracefully falls back to system Python. Either way, it just works!
 
 ### 3. Configure the Plugin
 
