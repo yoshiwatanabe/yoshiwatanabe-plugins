@@ -31,18 +31,30 @@ Execute the query_memory.py script:
 ```bash
 cd "${CLAUDE_PLUGIN_ROOT}"
 
+# Detect Python command (python3 on Linux, python on Windows)
+PYTHON_CMD=$(command -v python3 || command -v python)
+
 # Try to use venv if available, create if needed, skip if venv creation fails
 if [ -d "venv" ]; then
-  source venv/bin/activate
-elif python3 -m venv venv 2>/dev/null; then
+  # Activate venv (cross-platform)
+  if [ -f "venv/bin/activate" ]; then
+    source venv/bin/activate
+  elif [ -f "venv/Scripts/activate" ]; then
+    source venv/Scripts/activate
+  fi
+elif $PYTHON_CMD -m venv venv 2>/dev/null; then
   echo "Setting up Python environment (first time)..."
-  source venv/bin/activate
+  if [ -f "venv/bin/activate" ]; then
+    source venv/bin/activate
+  elif [ -f "venv/Scripts/activate" ]; then
+    source venv/Scripts/activate
+  fi
   pip install -r requirements.txt
 else
   echo "Note: Using system Python (venv creation not available)"
 fi
 # Use python3 on Linux/WSL, python on Windows
-python3 scripts/query_memory.py find-repo \
+$PYTHON_CMD scripts/query_memory.py find-repo \
   --config-repo "$YW_CONFIG_REPO_PATH" \
   --repo-name {repo_name}
 ```
