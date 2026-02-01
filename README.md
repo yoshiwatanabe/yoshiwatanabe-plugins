@@ -36,38 +36,13 @@ Each plugin is domain-focused and independent:
 
 ## Installation
 
-### Quick Start (Recommended)
+**[📖 View Complete Installation Guide →](INSTALL.md)**
 
-Install plugins directly from this marketplace using Claude Code:
+### Quick Start
 
-```bash
-# Add this marketplace
+```
 /plugin marketplace add yoshiwatanabe/yoshiwatanabe-plugins
-
-# Install the dev-memory plugin
 /plugin install yoshiwatanabe-dev@yoshiwatanabe-plugins
-```
-
-### Local Testing
-
-For testing unreleased versions:
-
-```bash
-# Clone the repository
-git clone https://github.com/yoshiwatanabe/yoshiwatanabe-plugins.git
-
-# Add local marketplace
-/plugin marketplace add ./yoshiwatanabe-plugins
-
-# Install plugin
-/plugin install yoshiwatanabe-dev@yoshiwatanabe-plugins
-```
-
-### Configuration
-
-After installation, configure the plugin with your configuration repository path:
-
-```bash
 claude config set yoshiwatanabe-dev.configRepoPath "/path/to/your-config-repo"
 ```
 

@@ -70,10 +70,6 @@
     }
   ],
 
-  "scripts": {
-    "postinstall": "python install/setup_venv.py"
-  },
-
   "config": {
     "configRepoPath": {
       "description": "Path to your configuration repository (e.g., yoshiwatanabe-configurations)",
