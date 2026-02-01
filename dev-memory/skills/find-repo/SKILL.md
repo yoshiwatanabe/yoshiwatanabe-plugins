@@ -29,9 +29,9 @@ This skill finds all clones of a repository across all machines and environments
 Execute the query_memory.py script:
 
 ```bash
-cd ~/.claude/plugins/yoshiwatanabe-dev
-source venv/bin/activate  # or venvScriptsctivate on Windows
-python scripts/query_memory.py find-repo \
+# Plugin root is current directory when skill executes
+source ./venv/bin/activate  # or .envScriptsctivate on Windows
+python ./scripts/query_memory.py find-repo \
   --config-repo "$YW_CONFIG_REPO_PATH" \
   --repo-name {repo_name}
 ```

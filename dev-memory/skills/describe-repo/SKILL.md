@@ -46,14 +46,13 @@ Get current machine and OS context:
 
 Get the configuration repository path from environment:
 - Read `YW_CONFIG_REPO_PATH` environment variable (required)
-- Plugin is installed at `~/.claude/plugins/yoshiwatanabe-dev/`
 
 Execute the manage_memory.py script:
 
 ```bash
-cd ~/.claude/plugins/yoshiwatanabe-dev
+# Plugin root is current directory when skill executes
 source venv/bin/activate  # or venv\Scripts\activate on Windows
-python scripts/manage_memory.py describe-repo \
+python ./scripts/manage_memory.py describe-repo \
   --config-repo "$YW_CONFIG_REPO_PATH" \
   --repo-path {repo_path} \
   --description "{description}" \

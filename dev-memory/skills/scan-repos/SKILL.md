@@ -35,9 +35,9 @@ On Windows machines, scan both locations to find all repositories.
 Execute the scan_repos.py script:
 
 ```bash
-cd ~/.claude/plugins/yoshiwatanabe-dev
-source venv/bin/activate  # or venvScriptsctivate on Windows
-python scripts/scan_repos.py scan-repos \
+# Plugin root is current directory when skill executes
+source ./venv/bin/activate  # or .envScriptsctivate on Windows
+python ./scripts/scan_repos.py scan-repos \
   --config-repo "$YW_CONFIG_REPO_PATH" \
   --mode {mode} \
   --machine {machine}

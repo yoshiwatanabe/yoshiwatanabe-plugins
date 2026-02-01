@@ -38,10 +38,10 @@ This skill archives an obsolete repository so it won't appear in query results.
 Execute the manage_memory.py script:
 
 ```bash
-cd ~/.claude/plugins/yoshiwatanabe-dev
-source venv/bin/activate  # or venvScriptsctivate on Windows-dev
+# Plugin root is current directory when skill executes
+source ./venv/bin/activate  # or .envScriptsctivate on Windows-dev
 source venv/bin/activate  # or venv\Scripts\Activate.ps1 on Windows
-python scripts/manage_memory.py archive-repo \
+python ./scripts/manage_memory.py archive-repo \
   --config-repo "$YW_CONFIG_REPO_PATH" \
   --repo-name {repo_name} \
   --reason "{reason}"

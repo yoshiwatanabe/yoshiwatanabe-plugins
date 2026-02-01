@@ -36,9 +36,9 @@ Extract keywords from the user's query:
 Execute the query_memory.py script:
 
 ```bash
-cd ~/.claude/plugins/yoshiwatanabe-dev
-source venv/bin/activate  # or venvScriptsctivate on Windows
-python scripts/query_memory.py search-memory \
+# Plugin root is current directory when skill executes
+source ./venv/bin/activate  # or .envScriptsctivate on Windows
+python ./scripts/query_memory.py search-memory \
   --config-repo "$YW_CONFIG_REPO_PATH" \
   --query "{query}" \
   --limit {limit}
