@@ -23,17 +23,29 @@ Simple 3-step installation using Claude Code.
 
 ### 3. Configure the Plugin
 
-Replace the path with your configuration repository location:
+Add the configuration repository path to your Claude Code settings.
+
+Edit `~/.claude/settings.json` and add the `env` section:
 
 **Windows:**
-```
-claude config set yoshiwatanabe-dev.configRepoPath "C:\Users\<username>\Repos\yoshiwatanabe-configurations"
+```json
+{
+  "env": {
+    "YW_CONFIG_REPO_PATH": "C:\\Users\\<username>\\Repos\\yoshiwatanabe-configurations"
+  }
+}
 ```
 
 **WSL/Linux:**
+```json
+{
+  "env": {
+    "YW_CONFIG_REPO_PATH": "/home/<username>/repos/yoshiwatanabe-configurations"
+  }
+}
 ```
-claude config set yoshiwatanabe-dev.configRepoPath "/home/<username>/repos/yoshiwatanabe-configurations"
-```
+
+**Note:** If you have other environment variables, merge them into the existing `env` object.
 
 ## Verify Installation
 

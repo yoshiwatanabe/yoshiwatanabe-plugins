@@ -38,10 +38,11 @@ This skill archives an obsolete repository so it won't appear in query results.
 Execute the manage_memory.py script:
 
 ```bash
-cd /path/to/.prototype-plugin-dev
+cd ~/.claude/plugins/yoshiwatanabe-dev
+source venv/bin/activate  # or venvScriptsctivate on Windows-dev
 source venv/bin/activate  # or venv\Scripts\Activate.ps1 on Windows
 python scripts/manage_memory.py archive-repo \
-  --config-repo /path/to/yoshiwatanabe-configurations \
+  --config-repo "$YW_CONFIG_REPO_PATH" \
   --repo-name {repo_name} \
   --reason "{reason}"
 ```

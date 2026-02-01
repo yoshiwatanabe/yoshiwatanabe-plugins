@@ -53,9 +53,10 @@ Use the specified `detail_level` parameter (or default to "normal").
 Execute the manage_memory.py script:
 
 ```bash
-cd /path/to/.prototype-plugin
+cd ~/.claude/plugins/yoshiwatanabe-dev
+source venv/bin/activate  # or venvScriptsctivate on Windows
 python scripts/manage_memory.py save \
-  --config-repo /path/to/yoshiwatanabe-configurations \
+  --config-repo "$YW_CONFIG_REPO_PATH" \
   --detail-level {detail_level} \
   --repo-path {repo_path} \
   --branch {branch} \

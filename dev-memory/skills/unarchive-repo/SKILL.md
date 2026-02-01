@@ -28,10 +28,11 @@ This skill restores an archived repository so it appears in query results again.
 Execute the manage_memory.py script:
 
 ```bash
-cd /path/to/.prototype-plugin-dev
+cd ~/.claude/plugins/yoshiwatanabe-dev
+source venv/bin/activate  # or venvScriptsctivate on Windows-dev
 source venv/bin/activate  # or venv\Scripts\Activate.ps1 on Windows
 python scripts/manage_memory.py unarchive-repo \
-  --config-repo /path/to/yoshiwatanabe-configurations \
+  --config-repo "$YW_CONFIG_REPO_PATH" \
   --repo-name {repo_name}
 ```
 

@@ -44,18 +44,25 @@ Get current machine and OS context:
 
 ### 3. Call Python Script
 
+Get the configuration repository path from environment:
+- Read `YW_CONFIG_REPO_PATH` environment variable (required)
+- Plugin is installed at `~/.claude/plugins/yoshiwatanabe-dev/`
+
 Execute the manage_memory.py script:
 
 ```bash
-cd /path/to/.prototype-plugin
+cd ~/.claude/plugins/yoshiwatanabe-dev
+source venv/bin/activate  # or venv\Scripts\activate on Windows
 python scripts/manage_memory.py describe-repo \
-  --config-repo /path/to/yoshiwatanabe-configurations \
+  --config-repo "$YW_CONFIG_REPO_PATH" \
   --repo-path {repo_path} \
   --description "{description}" \
   --tags "{tags}" \
   --machine {machine} \
   --os {os}
 ```
+
+**Note:** If `YW_CONFIG_REPO_PATH` is not set, return an error telling the user to configure it in `~/.claude/settings.json`
 
 ### 4. Handle Result
 

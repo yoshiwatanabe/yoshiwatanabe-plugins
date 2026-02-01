@@ -43,7 +43,15 @@ Each plugin is domain-focused and independent:
 ```
 /plugin marketplace add yoshiwatanabe/yoshiwatanabe-plugins
 /plugin install yoshiwatanabe-dev@yoshiwatanabe-plugins
-claude config set yoshiwatanabe-dev.configRepoPath "/path/to/your-config-repo"
+```
+
+Then add to `~/.claude/settings.json`:
+```json
+{
+  "env": {
+    "YW_CONFIG_REPO_PATH": "/path/to/your-config-repo"
+  }
+}
 ```
 
 ## Configuration Repository
