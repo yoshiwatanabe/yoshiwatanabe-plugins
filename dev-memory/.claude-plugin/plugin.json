@@ -9,7 +9,5 @@
   "homepage": "https://github.com/yoshiwatanabe/yoshiwatanabe-plugins/tree/main/dev-memory",
   "repository": "https://github.com/yoshiwatanabe/yoshiwatanabe-plugins",
   "license": "MIT",
-  "keywords": ["memory", "episodes", "repositories", "development", "tracking", "git", "cross-machine"],
-  "agents": "./agents/",
-  "skills": "./skills/"
+  "keywords": ["memory", "episodes", "repositories", "development", "tracking", "git", "cross-machine"]
 }
