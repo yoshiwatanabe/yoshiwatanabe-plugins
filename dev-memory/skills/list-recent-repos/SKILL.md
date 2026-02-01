@@ -32,9 +32,9 @@ This skill lists recently worked-on repositories across all machines.
 Execute the query_memory.py script:
 
 ```bash
-# Plugin root is current directory when skill executes
-source ./venv/bin/activate  # or .envScriptsctivate on Windows
-python ./scripts/query_memory.py list-recent-repos \
+cd "${CLAUDE_PLUGIN_ROOT}"
+source venv/bin/activate
+python scripts/query_memory.py list-recent-repos \
   --config-repo "$YW_CONFIG_REPO_PATH" \
   --count {count} \
   --filter {filter}

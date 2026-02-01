@@ -44,20 +44,14 @@ Get current machine and OS context:
 
 ### 3. Call Python Script
 
-**Step 1: Find plugin directory**
-```bash
-PLUGIN_DIR=$(find ~/.claude/plugins/cache -type d -path "*/yoshiwatanabe-plugins/yoshiwatanabe-dev/*/scripts" 2>/dev/null | head -1 | xargs dirname)
-```
-
-If `PLUGIN_DIR` is empty, return error: "Plugin installation not found. Try reinstalling with /plugin install yoshiwatanabe-dev@yoshiwatanabe-plugins"
-
-**Step 2: Get configuration path**
+Get configuration repository path:
 - Read `YW_CONFIG_REPO_PATH` environment variable (required)
 - If not set, return error: "Please set YW_CONFIG_REPO_PATH in ~/.claude/settings.json. See installation guide for WSL path requirements."
 
-**Step 3: Execute the script**
+Execute the script from plugin directory:
+
 ```bash
-cd "$PLUGIN_DIR"
+cd "${CLAUDE_PLUGIN_ROOT}"
 source venv/bin/activate
 python scripts/manage_memory.py describe-repo \
   --config-repo "$YW_CONFIG_REPO_PATH" \
