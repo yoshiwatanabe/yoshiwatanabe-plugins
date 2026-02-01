@@ -90,7 +90,9 @@ Expected JSON output:
 
 ### 4. Format and Display
 
-Present results in a clean list:
+**IMPORTANT:** Always show machine and OS information - this helps users track where repositories are located across multiple machines.
+
+Present results in a clean list with this format:
 
 ```
 5 most recently accessed repositories:
