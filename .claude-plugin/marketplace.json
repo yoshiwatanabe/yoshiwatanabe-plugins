@@ -1,0 +1,36 @@
+{
+  "name": "yoshiwatanabe-plugins",
+  "owner": {
+    "name": "Yoshi Watanabe",
+    "email": "yoshi.watanabe@example.com"
+  },
+  "metadata": {
+    "description": "Personal Claude Code plugins for domain-specific memory and configuration management",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "yoshiwatanabe-dev",
+      "source": "./dev-memory",
+      "description": "Development domain memory management: Track coding sessions, repositories, and development work across multiple machines",
+      "version": "1.0.0",
+      "author": {
+        "name": "Yoshi Watanabe",
+        "email": "yoshi.watanabe@example.com"
+      },
+      "category": "development",
+      "keywords": [
+        "memory",
+        "episodes",
+        "repositories",
+        "development",
+        "tracking",
+        "git",
+        "cross-machine"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/yoshiwatanabe/yoshiwatanabe-plugins",
+      "repository": "https://github.com/yoshiwatanabe/yoshiwatanabe-plugins"
+    }
+  ]
+}

@@ -47,6 +47,18 @@
       "description": "Search development memory by feature or keywords",
       "file": "skills/search-memory/SKILL.md",
       "scope": "user"
+    },
+    {
+      "name": "archive-repo",
+      "description": "Archive (hide) an obsolete repository from queries",
+      "file": "skills/archive-repo/SKILL.md",
+      "scope": "user"
+    },
+    {
+      "name": "unarchive-repo",
+      "description": "Restore an archived repository to active queries",
+      "file": "skills/unarchive-repo/SKILL.md",
+      "scope": "user"
     }
   ],
 

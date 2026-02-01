@@ -14,6 +14,7 @@ Track coding sessions, repositories, and development work across multiple machin
 - Cross-machine repository discovery
 - Memory search by keywords
 - Local repository scanning
+- Archive/unarchive obsolete repositories
 
 **Status:** ✅ Production Ready
 
@@ -35,15 +36,39 @@ Each plugin is domain-focused and independent:
 
 ## Installation
 
-Each plugin has its own installation instructions. See the plugin's README for details.
+### Quick Start (Recommended)
 
-### Example (dev-memory plugin):
+Install plugins directly from this marketplace using Claude Code:
 
 ```bash
-cd dev-memory/install
-./install.sh  # Linux/WSL
-# or
-.\install.ps1  # Windows
+# Add this marketplace
+/plugin marketplace add yoshiwatanabe/yoshiwatanabe-plugins
+
+# Install the dev-memory plugin
+/plugin install yoshiwatanabe-dev@yoshiwatanabe-plugins
+```
+
+### Local Testing
+
+For testing unreleased versions:
+
+```bash
+# Clone the repository
+git clone https://github.com/yoshiwatanabe/yoshiwatanabe-plugins.git
+
+# Add local marketplace
+/plugin marketplace add ./yoshiwatanabe-plugins
+
+# Install plugin
+/plugin install yoshiwatanabe-dev@yoshiwatanabe-plugins
+```
+
+### Configuration
+
+After installation, configure the plugin with your configuration repository path:
+
+```bash
+claude config set yoshiwatanabe-dev.configRepoPath "/path/to/your-config-repo"
 ```
 
 ## Configuration Repository
