@@ -51,11 +51,13 @@ Use Glob tool with pattern: {YW_CONFIG_REPO_PATH}/domains/dev/memory/episodes/*.
 ```
 
 Examples:
-- Windows: If YW_CONFIG_REPO_PATH is `C:\Users\twatana\repos\yoshiwatanabe-configurations`, then glob for:
-  `C:\Users\twatana\repos\yoshiwatanabe-configurations\domains\dev\memory\episodes\*.md`
+- Windows: If YW_CONFIG_REPO_PATH is `C:\Users\username\repos\yoshiwatanabe-configurations`, then glob for:
+  `C:\Users\username\repos\yoshiwatanabe-configurations\domains\dev\memory\episodes\*.md`
 
-- WSL/Linux: If YW_CONFIG_REPO_PATH is `/mnt/c/users/twatana/repos/yoshiwatanabe-configurations`, then glob for:
-  `/mnt/c/users/twatana/repos/yoshiwatanabe-configurations/domains/dev/memory/episodes/*.md`
+- WSL/Linux: If YW_CONFIG_REPO_PATH is `/mnt/c/users/username/repos/yoshiwatanabe-configurations`, then glob for:
+  `/mnt/c/users/username/repos/yoshiwatanabe-configurations/domains/dev/memory/episodes/*.md`
+
+Note: Replace "username" with your actual username. The agent will use the actual value from your YW_CONFIG_REPO_PATH environment variable.
 
 **If Glob returns empty:**
 ```
