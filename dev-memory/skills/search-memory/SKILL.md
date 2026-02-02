@@ -37,7 +37,8 @@ Error: YW_CONFIG_REPO_PATH not configured.
 Please set in ~/.claude/settings.json:
 {
   "env": {
-    "YW_CONFIG_REPO_PATH": "/mnt/c/users/username/repos/yoshiwatanabe-configurations"
+    "YW_CONFIG_REPO_PATH": "C:\\Users\\username\\repos\\yoshiwatanabe-configurations"  (Windows)
+    "YW_CONFIG_REPO_PATH": "/mnt/c/users/username/repos/yoshiwatanabe-configurations"  (WSL)
   }
 }
 ```
@@ -49,8 +50,12 @@ Use the path from YW_CONFIG_REPO_PATH environment variable:
 Use Glob tool with pattern: {YW_CONFIG_REPO_PATH}/domains/dev/memory/episodes/*.md
 ```
 
-Example: If YW_CONFIG_REPO_PATH is `/mnt/c/users/twatana/repos/yoshiwatanabe-configurations`, then glob for:
-`/mnt/c/users/twatana/repos/yoshiwatanabe-configurations/domains/dev/memory/episodes/*.md`
+Examples:
+- Windows: If YW_CONFIG_REPO_PATH is `C:\Users\twatana\repos\yoshiwatanabe-configurations`, then glob for:
+  `C:\Users\twatana\repos\yoshiwatanabe-configurations\domains\dev\memory\episodes\*.md`
+
+- WSL/Linux: If YW_CONFIG_REPO_PATH is `/mnt/c/users/twatana/repos/yoshiwatanabe-configurations`, then glob for:
+  `/mnt/c/users/twatana/repos/yoshiwatanabe-configurations/domains/dev/memory/episodes/*.md`
 
 **If Glob returns empty:**
 ```
