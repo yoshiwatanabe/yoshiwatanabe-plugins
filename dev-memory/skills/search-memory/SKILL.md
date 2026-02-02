@@ -1,7 +1,7 @@
 ---
 name: search-memory
 description: Search development memory using semantic understanding
-version: 2.0
+version: 2.1
 parameters:
   - name: query
     type: string
