@@ -7,6 +7,8 @@ import sys
 import json
 from pathlib import Path
 import platform
+import yaml
+from utils import normalize_repo_slug, get_machine_id, get_os_type
 
 
 class ScanRepos:
@@ -29,29 +31,42 @@ class ScanRepos:
 
         Args:
             mode: Scan mode (all, untracked, missing)
-            machine: Machine identifier (optional)
+            machine: Machine identifier (optional, will be auto-detected)
 
         Returns:
             dict: Scan results with untracked and/or missing repos
         """
+        # Auto-detect machine if not provided
+        if not machine:
+            machine = get_machine_id()
+
         # Determine scan locations
         scan_paths = self._get_scan_paths()
 
-        # Get locally cloned repos
-        local_repos = self._scan_local_repos(scan_paths)
+        # Get locally cloned repos with their hashed slugs
+        local_repos = self._scan_local_repos(scan_paths, machine)
 
         # Get tracked repos from memory
         tracked_repos = self._get_tracked_repos()
 
-        # Compare
-        untracked = local_repos - tracked_repos
-        missing = tracked_repos - local_repos
+        # Compare slugs
+        local_slugs = set(repo['slug'] for repo in local_repos)
+        tracked_slugs = set(tracked_repos.keys())
+
+        untracked_slugs = local_slugs - tracked_slugs
+        missing_slugs = tracked_slugs - local_slugs
 
         result = {}
         if mode in ["all", "untracked"]:
-            result["untracked"] = sorted(list(untracked))
+            result["untracked"] = sorted([
+                {"name": repo['name'], "path": repo['path'], "slug": repo['slug']}
+                for repo in local_repos if repo['slug'] in untracked_slugs
+            ], key=lambda x: x['name'])
         if mode in ["all", "missing"]:
-            result["missing"] = sorted(list(missing))
+            result["missing"] = sorted([
+                {"slug": slug, "info": tracked_repos[slug]}
+                for slug in missing_slugs
+            ], key=lambda x: x['slug'])
 
         result["scan_paths"] = [str(p) for p in scan_paths]
         result["total_local"] = len(local_repos)
@@ -73,9 +88,9 @@ class ScanRepos:
 
         return [p for p in paths if p.exists()]
 
-    def _scan_local_repos(self, scan_paths):
+    def _scan_local_repos(self, scan_paths, machine):
         """Scan local directories for git repositories."""
-        repos = set()
+        repos = []
 
         for scan_path in scan_paths:
             if not scan_path.exists():
@@ -83,21 +98,43 @@ class ScanRepos:
 
             for item in scan_path.iterdir():
                 if item.is_dir() and (item / ".git").exists():
-                    repos.add(item.name)
+                    # Generate the same slug that would be used in memory system
+                    slug = normalize_repo_slug(str(item), machine)
+                    repos.append({
+                        'name': item.name,
+                        'path': str(item),
+                        'slug': slug
+                    })
 
         return repos
 
     def _get_tracked_repos(self):
         """Get list of tracked repositories from memory."""
-        repos = set()
+        repos = {}
 
         if not self.repos_dir.exists():
             return repos
 
         for repo_file in self.repos_dir.glob("*.md"):
             # Exclude hidden files and READMEs
-            if not repo_file.name.startswith(".") and repo_file.stem.lower() != "readme":
-                repos.add(repo_file.stem)
+            if repo_file.name.startswith(".") or repo_file.stem.lower() == "readme":
+                continue
+
+            # Read metadata to get location info
+            try:
+                content = repo_file.read_text(encoding="utf-8")
+                parts = content.split("---\n", 2)
+                if len(parts) >= 3:
+                    frontmatter = yaml.safe_load(parts[1])
+                    location = frontmatter.get("location", {})
+                    repos[repo_file.stem] = {
+                        "path": location.get("path", "unknown"),
+                        "machine": location.get("machine", "unknown"),
+                        "os": location.get("os", "unknown"),
+                    }
+            except Exception:
+                # If we can't parse the file, just use the slug
+                repos[repo_file.stem] = {"path": "unknown", "machine": "unknown", "os": "unknown"}
 
         return repos
 

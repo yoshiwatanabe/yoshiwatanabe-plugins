@@ -63,7 +63,7 @@ class ManageMemory:
         # Generate episode metadata
         episode_id = generate_episode_id()
         timestamp = datetime.now(UTC).isoformat().replace('+00:00', 'Z')
-        repo_slug = normalize_repo_slug(kwargs["repo_path"])
+        repo_slug = normalize_repo_slug(kwargs["repo_path"], kwargs["machine"])
 
         # Build filename
         date_str = datetime.now(UTC).strftime("%Y-%m-%d")
@@ -149,7 +149,7 @@ class ManageMemory:
         # Note: No automatic pull - users can pull manually when needed
         # If push fails due to being behind, git will show clear error
 
-        repo_slug = normalize_repo_slug(kwargs["repo_path"])
+        repo_slug = normalize_repo_slug(kwargs["repo_path"], kwargs["machine"])
         filepath = self.repos_dir / f"{repo_slug}.md"
         remote_url = self._get_remote_url(kwargs["repo_path"])
 
@@ -160,31 +160,27 @@ class ManageMemory:
             if len(parts) >= 3:
                 frontmatter = yaml.safe_load(parts[1])
             else:
-                frontmatter = self._create_repo_frontmatter(repo_slug, remote_url)
+                frontmatter = self._create_repo_frontmatter(
+                    repo_slug, remote_url, kwargs["machine"], kwargs["os"], kwargs["repo_path"]
+                )
         else:
-            frontmatter = self._create_repo_frontmatter(repo_slug, remote_url)
+            frontmatter = self._create_repo_frontmatter(
+                repo_slug, remote_url, kwargs["machine"], kwargs["os"], kwargs["repo_path"]
+            )
 
         # Update metadata
         frontmatter["description"] = kwargs["description"]
         frontmatter["tags"] = kwargs.get("tags", "").split(",") if kwargs.get("tags") else []
 
-        # Update or add clone info
-        clone_info = {
+        # Update location info (single location per file now)
+        if "location" not in frontmatter:
+            frontmatter["location"] = {}
+        frontmatter["location"].update({
             "machine": kwargs["machine"],
             "os": kwargs["os"],
             "path": kwargs["repo_path"],
             "last_accessed": datetime.now(UTC).isoformat().replace('+00:00', 'Z'),
-        }
-        clones = frontmatter.get("clones", [])
-        updated = False
-        for clone in clones:
-            if clone["machine"] == kwargs["machine"] and clone["os"] == kwargs["os"]:
-                clone.update(clone_info)
-                updated = True
-                break
-        if not updated:
-            clones.append(clone_info)
-        frontmatter["clones"] = clones
+        })
 
         # Write file
         content = f"---\n{yaml.dump(frontmatter, default_flow_style=False, sort_keys=False)}---\n\n"
@@ -338,17 +334,22 @@ class ManageMemory:
         except Exception:
             return ""
 
-    def _create_repo_frontmatter(self, repo_slug, remote_url):
+    def _create_repo_frontmatter(self, repo_slug, remote_url, machine, os_type, repo_path):
         """Create initial repository frontmatter."""
         return {
             "type": "repository-metadata",
-            "version": "1.0",
+            "version": "2.0",
             "repository": {
                 "name": repo_slug,
                 "slug": repo_slug,
                 "remote": remote_url,
             },
-            "clones": [],
+            "location": {
+                "machine": machine,
+                "os": os_type,
+                "path": repo_path,
+                "last_accessed": datetime.now(UTC).isoformat().replace('+00:00', 'Z'),
+            },
         }
 
     def _update_repo_metadata(self, repo_slug, context, remote_url):
@@ -361,19 +362,10 @@ class ManageMemory:
             if len(parts) >= 3:
                 frontmatter = yaml.safe_load(parts[1])
 
-                # Update last_accessed for matching clone
-                for clone in frontmatter.get("clones", []):
-                    if clone["machine"] == context["machine"] and clone["os"] == context["os"]:
-                        clone["last_accessed"] = datetime.now(UTC).isoformat().replace('+00:00', 'Z')
-                        break
-                else:
-                    # Clone not found, add it
-                    frontmatter.setdefault("clones", []).append({
-                        "machine": context["machine"],
-                        "os": context["os"],
-                        "path": context["repo_path"],
-                        "last_accessed": datetime.now(UTC).isoformat().replace('+00:00', 'Z'),
-                    })
+                # Update last_accessed for this location
+                if "location" not in frontmatter:
+                    frontmatter["location"] = {}
+                frontmatter["location"]["last_accessed"] = datetime.now(UTC).isoformat().replace('+00:00', 'Z')
 
                 # Re-write file
                 new_content = f"---\n{yaml.dump(frontmatter, default_flow_style=False, sort_keys=False)}---\n\n"

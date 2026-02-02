@@ -613,9 +613,24 @@ def generate_episode_id():
     """Generate unique episode ID."""
     return f"ep-{uuid.uuid4().hex[:12]}"
 
-def normalize_repo_slug(repo_path):
-    """Extract repository slug from path."""
-    return Path(repo_path).name
+def normalize_repo_slug(repo_path, machine=None):
+    """
+    Generate unique repository slug based on machine + local path.
+
+    See docs/design/07-unique-repository-naming.md for details.
+    """
+    import hashlib
+
+    repo_name = Path(repo_path).name
+    full_path = str(Path(repo_path).resolve()).lower().replace('\\', '/')
+
+    if machine:
+        unique_key = f"{machine.lower()}:{full_path}"
+    else:
+        unique_key = full_path
+
+    path_hash = hashlib.sha256(unique_key.encode('utf-8')).hexdigest()[:8]
+    return f"{repo_name}-{path_hash}"
 
 def get_machine_id():
     """Get machine identifier (hostname)."""
