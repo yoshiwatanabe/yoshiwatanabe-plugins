@@ -2,6 +2,7 @@
 name: memory-manager
 description: Subagent for managing memory operations in isolated context
 version: 1.0
+color: purple
 tools:
   - Bash
   - Read
