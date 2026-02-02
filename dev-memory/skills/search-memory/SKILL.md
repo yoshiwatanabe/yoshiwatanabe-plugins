@@ -25,11 +25,41 @@ Search through memory episodes using Claude's semantic understanding, not just k
 
 ### 1. Find All Episodes
 
-Get configuration path from `YW_CONFIG_REPO_PATH` environment variable.
-
-Find all episode files:
+**Get configuration path:**
+```bash
+Use Bash: echo $YW_CONFIG_REPO_PATH
 ```
-Use Glob tool: $YW_CONFIG_REPO_PATH/domains/dev/memory/episodes/*.md
+
+If empty or not set, return error:
+```
+Error: YW_CONFIG_REPO_PATH not configured.
+
+Please set in ~/.claude/settings.json:
+{
+  "env": {
+    "YW_CONFIG_REPO_PATH": "/mnt/c/users/username/repos/yoshiwatanabe-configurations"
+  }
+}
+```
+
+**Find all episode files:**
+
+Use the path from YW_CONFIG_REPO_PATH environment variable:
+```
+Use Glob tool with pattern: {YW_CONFIG_REPO_PATH}/domains/dev/memory/episodes/*.md
+```
+
+Example: If YW_CONFIG_REPO_PATH is `/mnt/c/users/twatana/repos/yoshiwatanabe-configurations`, then glob for:
+`/mnt/c/users/twatana/repos/yoshiwatanabe-configurations/domains/dev/memory/episodes/*.md`
+
+**If Glob returns empty:**
+```
+Error: No episode files found.
+
+Checked: {YW_CONFIG_REPO_PATH}/domains/dev/memory/episodes/
+Directory exists but no episodes saved yet.
+
+Use /save-memory to create your first episode.
 ```
 
 Sort by filename (most recent first) and limit to 50 most recent episodes if there are many.
