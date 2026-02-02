@@ -1,152 +1,144 @@
 ---
 name: search-memory
-description: Search memory episodes by feature, work description, or keywords
-version: 1.0
+description: Search development memory using semantic understanding
+version: 2.0
 parameters:
   - name: query
     type: string
-    description: Search query (keywords, feature name, etc.)
+    description: Natural language search query
     required: true
   - name: limit
-    type: integer
-    description: Maximum number of results
-    default: 10
+    type: number
+    description: Maximum results to return
+    default: 5
     optional: true
 agent: memory-manager
+allowed-tools: Glob, Read
+user-invocable: true
 ---
 
-# Search Memory
+# Search Memory (Semantic)
 
-This skill searches memory episodes using keywords or feature descriptions.
+Search through memory episodes using Claude's semantic understanding, not just keyword matching.
 
 ## Instructions for Agent
 
-### 1. Parse Query
+### 1. Find All Episodes
 
-Extract keywords from the user's query:
-- Split on spaces
-- Lowercase for case-insensitive search
-- Identify potential:
-  - Feature names (e.g., "auth validator", "key vault isolation")
-  - Technologies (e.g., "Azure", "Dynamics")
-  - Date references (convert to search terms if possible)
+Get configuration path from `YW_CONFIG_REPO_PATH` environment variable.
 
-### 2. Call Python Script
-
-Execute the query_memory.py script:
-
-```bash
-cd "${CLAUDE_PLUGIN_ROOT}"
-
-# Detect Python command (python3 on Linux, python on Windows)
-PYTHON_CMD=$(command -v python3 || command -v python)
-
-# Try to use venv if available, create if needed, skip if venv creation fails
-if [ -d "venv" ]; then
-  # Activate venv (cross-platform)
-  if [ -f "venv/bin/activate" ]; then
-    source venv/bin/activate
-  elif [ -f "venv/Scripts/activate" ]; then
-    source venv/Scripts/activate
-  fi
-elif $PYTHON_CMD -m venv venv 2>/dev/null; then
-  echo "Setting up Python environment (first time)..."
-  if [ -f "venv/bin/activate" ]; then
-    source venv/bin/activate
-  elif [ -f "venv/Scripts/activate" ]; then
-    source venv/Scripts/activate
-  fi
-  pip install -r requirements.txt
-else
-  echo "Note: Using system Python (venv creation not available)"
-fi
-# Use python3 on Linux/WSL, python on Windows
-$PYTHON_CMD scripts/query_memory.py search-memory \
-  --config-repo "$YW_CONFIG_REPO_PATH" \
-  --query "{query}" \
-  --limit {limit}
+Find all episode files:
+```
+Use Glob tool: $YW_CONFIG_REPO_PATH/domains/dev/memory/episodes/*.md
 ```
 
-### 3. Parse Results
+Sort by filename (most recent first) and limit to 50 most recent episodes if there are many.
 
-Expected JSON output:
-```json
-[
-  {
-    "episode_id": "ep-12345abcd",
-    "timestamp": "2026-01-31T14:30:00Z",
-    "machine": "work-main",
-    "os": "windows",
-    "repository": "dynamics-solutions",
-    "branch": "feature/auth-validator",
-    "commit": "abc123def456",
-    "summary": "Completed auth validator test implementation",
-    "keywords": ["auth", "validator", "test", "dynamics"],
-    "tags": ["azure-devops", "testing"]
-  },
-  ...
-]
+### 2. Read Episode Frontmatter
+
+For each episode file:
+```
+Use Read tool: Read first 40 lines (YAML frontmatter + summary)
 ```
 
-### 4. Format and Display
+Extract from YAML:
+- `id`: Episode ID
+- `timestamp`: When created
+- `machine`: Which machine
+- `os`: Operating system
+- `repository.name`: Repository
+- `repository.branch`: Git branch
+- `repository.commit`: Commit hash (show first 7 chars)
+- `summary`: Episode summary
+- `keywords`: Keywords list
+- `context.tags`: Tags list
 
-Present matching episodes:
+### 3. Semantic Analysis
+
+**CRITICAL:** Use semantic understanding, not keyword matching!
+
+Analyze which episodes are relevant to user's query by:
+- Understanding **query intent** (what is the user really asking?)
+- Considering **synonyms** and related concepts
+- Looking at **context** in summary, keywords, and tags
+- Weighing **recency** (recent work often more relevant)
+
+**Examples of semantic understanding:**
+- Query: "plugin development" → Match: "Claude Code extensions", "marketplace", "skills"
+- Query: "authentication" → Match: "OAuth", "login flow", "security tokens", "auth"
+- Query: "what did I do last week?" → Match: Recent episodes by timestamp
+
+Don't just grep for exact words - understand meaning!
+
+### 4. Rank Results
+
+Select top {limit} most semantically relevant episodes.
+
+Sort by:
+1. **Relevance** to query (primary)
+2. **Recency** (secondary tiebreaker)
+
+### 5. Format Output
+
+For each result:
 
 ```
-Found 3 memory episodes matching "Azure key vault isolation":
+Found {count} episodes matching "{query}":
 
-1. Azure Key Vault secret isolation feature (Dec 15, 2025)
-   Repository: azure-infra
-   Branch: feature/keyvault-isolation
-   Commit: abc123d
-   Machine: work-main (Windows)
+1. {Summary first sentence} ({relative_date})
+   Machine: {machine} ({os})
+   Repository: {repo_name} ({branch})
+   Commit: {first_7_chars_of_commit}
 
-   Completed implementation of key vault secret isolation
-   for multi-tenant environments.
+   {Full summary from episode}
 
-2. Key vault configuration update (Dec 10, 2025)
-   Repository: azure-infra
-   Branch: main
-   Commit: def456a
-   Machine: work-devbox (WSL)
+   → Why relevant: {Explain semantic connection to query}
 
-   Updated key vault access policies to support isolation.
-
-...
-
-Use episode ID to view full details (stored in memory/episodes/).
+2. {Next episode...}
 ```
 
-Highlight:
-- **Best matches** (all keywords present)
-- **Most recent** episodes first
-- **Repository and branch** for context
-- **Commit hash** for reference
+**Relative dates:**
+- Today → "Today"
+- Yesterday → "Yesterday"
+- This week → "3 days ago"
+- Older → "Jan 15, 2026"
 
-### 5. Provide Context
-
-If results found:
+**If no relevant episodes:**
 ```
-Tip: Clone location on {machine}: {path}
-     Last commit: {commit_hash}
-```
+No episodes found matching "{query}" semantically.
 
-If no results:
-```
-No memory episodes found matching "{query}".
-
-Try:
-- Broader search terms
-- Check if work was tracked with /save-memory
-- Use /list-recent-repos to browse repositories
+You have {total_count} episodes. Try:
+- Broader terms: "authentication" vs "OAuth2 PKCE flow"
+- Different phrasing: "API work" vs "endpoint development"
+- /list-recent-repos to see recent activity
 ```
 
-## Example Usage
+### 6. Explanation Quality
 
-**User:** "I worked on Azure key vault isolation, which repo was that?"
+Always explain WHY each episode matches. Examples:
 
-**Agent:**
-1. Parses keywords: ["azure", "key", "vault", "isolation"]
-2. Calls query_memory.py search-memory
-3. Returns matching episode with repository, branch, and commit details
-4. Provides context for locating the code
+✅ Good: "Relevant because: Discusses plugin architecture and marketplace setup"
+✅ Good: "Relevant because: Authentication work using OAuth, matches your query"
+❌ Bad: "Relevant because: Contains keyword 'plugin'"
+❌ Bad: "Relevant because: Recent"
+
+## Advantages Over Keyword Search
+
+✅ Understands synonyms (auth = authentication = OAuth)
+✅ Contextual (knows "marketplace" relates to "plugins")
+✅ Natural queries ("what did I work on?" vs keywords)
+✅ Explains relevance (not just shows matches)
+
+## Example Queries
+
+**Broad:**
+- "What did I work on this week?"
+- "Show me authentication work"
+
+**Specific:**
+- "Which repo has OAuth implementation?"
+- "When did I work on marketplace plugin?"
+
+**Conceptual:**
+- "Security improvements"
+- "Cross-platform fixes"
