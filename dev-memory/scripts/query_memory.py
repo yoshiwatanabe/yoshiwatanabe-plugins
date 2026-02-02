@@ -46,10 +46,18 @@ class QueryMemory:
             return {"repository": repo_name, "clones": [], "found": False}
 
         frontmatter = yaml.safe_load(parts[1])
+
+        # Handle both version 2.0 (location) and legacy (clones) formats
+        version = frontmatter.get("version", "1.0")
+        if version == "2.0" and "location" in frontmatter:
+            clones = [frontmatter["location"]]
+        else:
+            clones = frontmatter.get("clones", [])
+
         return {
             "repository": repo_name,
             "description": frontmatter.get("description", ""),
-            "clones": frontmatter.get("clones", []),
+            "clones": clones,
             "tags": frontmatter.get("tags", []),
             "archived": frontmatter.get("archived", False),
             "archived_date": frontmatter.get("archived_date"),
@@ -83,23 +91,35 @@ class QueryMemory:
             if not include_archived and frontmatter.get("archived", False):
                 continue
 
-            # Find most recent access across all clones
+            # Handle both version 2.0 (location) and legacy (clones) formats
+            version = frontmatter.get("version", "1.0")
             most_recent = None
-            most_recent_clone = None
-            for clone in frontmatter.get("clones", []):
-                accessed = clone.get("last_accessed")
-                if accessed and (not most_recent or accessed > most_recent):
-                    most_recent = accessed
-                    most_recent_clone = clone
+            most_recent_location = None
+            locations = []
+
+            if version == "2.0" and "location" in frontmatter:
+                # Version 2.0: single location field
+                location = frontmatter["location"]
+                most_recent = location.get("last_accessed")
+                most_recent_location = location
+                locations = [location]
+            else:
+                # Legacy format: clones array
+                for clone in frontmatter.get("clones", []):
+                    accessed = clone.get("last_accessed")
+                    if accessed and (not most_recent or accessed > most_recent):
+                        most_recent = accessed
+                        most_recent_location = clone
+                locations = frontmatter.get("clones", [])
 
             if most_recent:
                 repos.append({
                     "name": frontmatter["repository"]["slug"],
                     "description": frontmatter.get("description", ""),
                     "last_accessed": most_recent,
-                    "last_machine": most_recent_clone.get("machine") if most_recent_clone else None,
-                    "last_os": most_recent_clone.get("os") if most_recent_clone else None,
-                    "clones": frontmatter.get("clones", []),
+                    "last_machine": most_recent_location.get("machine") if most_recent_location else None,
+                    "last_os": most_recent_location.get("os") if most_recent_location else None,
+                    "clones": locations,  # Return locations for compatibility
                     "tags": frontmatter.get("tags", []),
                     "archived": frontmatter.get("archived", False),
                 })
